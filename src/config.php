@@ -3,7 +3,7 @@
 /**
  * This is database name as from your PHPMyAdmin :)
  */
-define('DB_NAME','hostelia');
+define('DB_NAME','hostel_management');
 
 /**
  * The database type we're using
