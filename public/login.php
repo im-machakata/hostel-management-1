@@ -1,12 +1,42 @@
 <?php
 // use namesapce and classes from existing code
 use App\System\Request;
+use App\System\Response;
+use App\System\Database;
 
 // include autoloader file
 require_once __DIR__ . '/../src/autoload.php';
 
 // instantiate empty $errros array
 $errors = [];
+
+// if request method is post, handle login
+if (Request::isPost()) {
+
+    // get username and password from request
+    $username = Request::post('username');
+    $password = Request::post('password');
+
+    // connect to database
+    $db = new Database();
+
+    // prepare and execute sql statement
+    $db->prepare('SELECT * FROM users WHERE username = :username LIMIT 0,1', [
+        'username' => $username
+    ])->execute();
+
+    // get user results from database
+    if (!$user = $db->getRow()) {
+        $errors[] = 'Invalid username or password';
+    } else {
+        if (!password_verify($password, $user['password'])) {
+            $errors[] = 'Invalid username or password';
+        } else {
+            $_SESSION['user'] = $user['id'];
+            return Response::redirect('/');
+        }
+    }
+}
 
 // render head tags from components
 render_component('head', ['title' => 'Login']);
@@ -34,8 +64,8 @@ render_component('head', ['title' => 'Login']);
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" placeholder="Password" id="password" name="password" value="<?= Request::getVar('password') ?>" required>
                     </div>
-                    <button type="submit" class="btn btn-success btn-lg w-100">Login</button>
-                    <p class="mt-4 mb-1 text-lg-center">Don't have an account? <a href="/create-account.php">Create one</a> for free.</p>
+                    <button type="submit" class="btn btn-success btn-lg w-100 border-0">Login</button>
+                    <p class="mt-4 mb-1"><a href="/register.php">Create account</a> for free.</p>
                 </form>
             </div>
         </section>
