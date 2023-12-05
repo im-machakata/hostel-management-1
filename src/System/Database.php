@@ -226,6 +226,13 @@ class Database
         return $this->database->lastInsertId();
     }
 
+    public function tableExists($table_name){
+        $this->prepare("SELECT 1 FROM information_schema.tables WHERE table_schema = :dbname AND table_name = :table_name",[
+            'table_name' => $table_name,
+            'dbname' => DB_NAME,
+        ])->execute();
+        return (bool) $this->getRow();
+    }
     /*
      * Close Databse Connect
      * Use It When you Want Close Connection
