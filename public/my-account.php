@@ -1,8 +1,38 @@
 <?php
-require_once __DIR__ . '/../src/Controllers/AccountController.php';
-$controller = new AccountController();
-$user = new Users();
-$user = $user->find(session('UserID'))->getRow();
+
+use App\System\Database;
+use App\System\Request;
+
+// include autoloader
+include __DIR__ . "/../src/autoload.php";
+
+$errors = [];
+
+if (Request::isPost()) {
+    $db = new Database();
+
+    // remove extra spaces
+    $username = trim(Request::post('student-id'));
+    $password = trim(Request::post('password'));
+
+    // check if username is unique
+    $db->prepare('SELECT id FROM users WHERE username = :username', [
+        'username' => $username
+    ])->execute();
+
+    if (!$db->getRow()) {
+        $db->prepare('UPDATE users SET username = :username', [
+            'username' => $username
+        ])->execute();
+
+        if ($password) {
+            $db->prepare('UPDATE users SET password = :password', [
+                'password' => password_hash($password, PASSWORD_DEFAULT)
+            ])->execute();
+        }
+    }
+}
+
 
 render_component('head', ['title' => 'My Profile']); ?>
 
@@ -16,33 +46,29 @@ render_component('head', ['title' => 'My Profile']); ?>
             </div>
 
             <!-- Errors Layouts -->
-            <?php if ($controller->hasErrors()) : ?>
-                <div class="col-11 col-lg-6 px-0">
-                    <div class="alert alert-danger border-danger"><?= $controller->getLastError() ?></div>
-                </div>
-                <div class="col-12"></div>
-            <?php endif; ?>
+            <?php render_component('errors', ['errors' => $errors]); ?>
+
             <!-- Success Layout -->
-            <?php if ($controller->request->isPost() && !$controller->hasErrors()) : ?>
-                <div class="col-11 col-lg-6 px-0">
+            <?php if (Request::isPost() && !$errors) : ?>
+                <div class="col-11 col-lg-6">
                     <div class="alert alert-success border border-success">Your account has been updated.</div>
                 </div>
                 <div class="col-12"></div>
             <?php endif; ?>
 
             <!-- Register Form -->
-            <div class="col-11 col-lg-6 my-2 border border-success rounded p-3 p-lg-4 mb-4">
+            <div class="col-11 col-lg-6 my-2 p-3 p-lg-4 mb-4">
                 <form action="/my-account.php" method="post">
-                    <div class="mb-3 form-floating">
-                        <input type="text" class="form-control" placeholder="Student ID" id="student-id" name="student-id" value="<?= $user['username'] ?>" required>
+                    <div class="mb-3">
                         <label for="student-id" class="form-label">Student ID</label>
+                        <input type="text" class="form-control" placeholder="Student ID" id="student-id" name="student-id" value="<?= user()->username ?>" required>
                     </div>
-                    <div class="mb-3 form-floating">
-                        <input type="password" class="form-control" placeholder="Password" id="password" name="password" value="" required>
+                    <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" placeholder="Password" id="password" name="password" value="" required>
                     </div>
                     <div class="form-check form-switch mb-4">
-                        <input class="form-check-input" type="checkbox" role="switch" value="" id="admin" <?= $user['is_admin'] ? 'checked' : '' ?> disabled>
+                        <input class="form-check-input" type="checkbox" role="switch" value="" id="admin" <?= !user()->is_student ? 'checked' : '' ?> disabled>
                         <label class="form-check-label" for="admin">
                             Is Adminstrator
                         </label>
