@@ -13,6 +13,7 @@ if (!user()->getId()) {
 }
 
 // initiate db
+$errors = [];
 $db = new Database();
 
 // get available rooms
@@ -21,7 +22,10 @@ $db->prepare('SELECT * FROM rooms WHERE is_booked = :is_booked', [
 ])->execute();
 $rooms = $db->getRows();
 
-$errors = ['There\'s no free rooms at the moment.'];
+// show error if rooms array empty
+if (!$rooms) :
+    $errors[] = 'There\'s no free rooms at the moment.';
+endif;
 
 render_component('head', ['title' => 'Home']);
 ?>
