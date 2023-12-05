@@ -2,12 +2,12 @@
 namespace App\System;
 class Response
 {
-    public function redirect($url)
+    public static function redirect($url)
     {
         header(sprintf('Location: %s', $url));
     }
 
-    public function setHeaders($name, $value)
+    public static function setHeaders($name, $value)
     {
         header(sprintf('%s: %s', $name, $value));
     }
