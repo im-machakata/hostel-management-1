@@ -1,5 +1,6 @@
 <?php
 require_once 'Request.php';
+// @session_start();
 /**
  * Returns a session value if provided or sets value to session key
  *
@@ -38,4 +39,32 @@ function url_active($url)
         return ' active';
     }
     return '';
+}
+
+function user()
+{
+    return new class
+    {
+        public $id = null;
+        private $row = null;
+
+        public function __construct()
+        {
+            $db = new \App\System\Database();
+            $db->prepare("SELECT * FROM users WHERE id = :id LIMIT 0,1", [
+                'id' => $this->getId()
+            ])->execute();
+            $this->row = $db->getRow();
+        }
+
+        public function getId()
+        {
+            return session('user');
+        }
+
+        public function __get($name)
+        {
+            return $this->row[$name] ?? null;
+        }
+    };
 }
