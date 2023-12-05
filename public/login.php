@@ -1,5 +1,5 @@
 <?php
-// use namesapce and classes from existing code
+// include namespaces
 use App\System\Request;
 use App\System\Response;
 use App\System\Database;
@@ -7,7 +7,12 @@ use App\System\Database;
 // include autoloader file
 require_once __DIR__ . '/../src/autoload.php';
 
-// instantiate empty $errros array
+// redirect user if logged in
+if (session('user')) {
+    return Response::redirect('/');
+}
+
+// instantiate empty $errors array
 $errors = [];
 
 // if request method is post, handle login
@@ -20,20 +25,27 @@ if (Request::isPost()) {
     // connect to database
     $db = new Database();
 
-    // prepare and execute sql statement
-    $db->prepare('SELECT * FROM users WHERE username = :username LIMIT 0,1', [
-        'username' => $username
-    ])->execute();
+    // check if table exists
+    if (!$table_exists = $db->tableExists('users')) {
+        $errors[] = 'Database table not found. Install migration file.';
+    }
 
-    // get user results from database
-    if (!$user = $db->getRow()) {
-        $errors[] = 'Invalid username or password';
-    } else {
-        if (!password_verify($password, $user['password'])) {
+    if ($table_exists) {
+        // prepare and execute sql statement
+        $db->prepare('SELECT * FROM users WHERE username = :username LIMIT 0,1', [
+            'username' => $username
+        ])->execute();
+
+        // get user results from database
+        if (!$user = $db->getRow()) {
             $errors[] = 'Invalid username or password';
         } else {
-            $_SESSION['user'] = $user['id'];
-            return Response::redirect('/');
+            if (!password_verify($password, $user['password'])) {
+                $errors[] = 'Invalid username or password';
+            } else {
+                session('user', $user['id']);
+                return Response::redirect('/');
+            }
         }
     }
 }
