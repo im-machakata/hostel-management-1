@@ -1,4 +1,4 @@
-<header class="mt-4 mb-4">
+<header class="my-4 bg-primary rounded-2 text-white py-5 mx-2 shadow-sm">
     <h1 class="text-lg-center pt-4 display-4 align-items-center fw-bold">
         <?= SCHOOL_NAME?>
     </h1>

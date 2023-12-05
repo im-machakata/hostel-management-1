@@ -22,6 +22,18 @@ html {
     scroll-behavior: auto;
 }
 
+.navbar-nav a.active {
+    color: var(--bs-success) !important;
+}
+
+.bg-primary {
+    background: var(--bs-success) !important;
+}
+
+header {
+    border-bottom: .8em solid var(--bs-info);
+}
+
 .card {
     margin: 8px auto;
 }
@@ -30,16 +42,23 @@ html {
     border-radius: 2px !important;
 }
 
+.btn-success {
+    background: var(--bs-success) !important;
+}
+
 .form-control, .rounded, .card {
     border-radius: 2px !important;
 }
 
 .form-control {
+    border-color: var(--bs-success);
     transition: cubic-bezier(0.165, 0.84, 0.44, 1) .5s;
 }
+
 .text-success {
     color: var(--bs-success) !important;
 }
+
 .form-control:hover,
 .form-control:focus,
 .form-control:active,
