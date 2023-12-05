@@ -18,9 +18,8 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `hostels_management`
+-- Database: `hostel_management`
 --
-
 -- --------------------------------------------------------
 
 --
@@ -29,7 +28,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `payments` (
   `id` int(11) NOT NULL,
-  `status` enum('Pending','Paid','Cancelled') NOT NULL DEFAULT 'Pending',
+  `status` enum('Pending','Paid','Failed','Cancelled') NOT NULL DEFAULT 'Pending',
   `student_id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
   `created_on` date NOT NULL,
@@ -64,7 +63,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(100) NOT NULL,
   `password` varchar(250) NOT NULL,
-  `is_admin` tinyint(1) NOT NULL DEFAULT 0
+  `is_student` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
