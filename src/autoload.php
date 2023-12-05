@@ -1,5 +1,5 @@
 <?php
-if (!session_id()) session_start();
+session_start();
 
 include_once 'config.php';
 include_once 'System/Functions.php';
