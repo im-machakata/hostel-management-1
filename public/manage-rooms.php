@@ -17,15 +17,15 @@ if (!user()->getId()) {
 $db = new Database();
 
 #region save/update table before we fetch new results
-if (Request::isPost() && in_array(Request::post('action'), ['edit', 'delete', 'new-room'])) {
+if (Request::isPost()) {
     $name = Request::post('roomName');
     $price = Request::post('roomPrice');
     $details = Request::post('roomDescription');
     $booked = Request::post('roomBooked');
-    $file = $_FILES['roomImage'];
+    $file = $_FILES['roomImage'] ?? null;
     $newFileName = false;
 
-    if ($file['error'] != UPLOAD_ERR_NO_FILE) {
+    if ($file && $file['error'] != UPLOAD_ERR_NO_FILE) {
 
         // check if file is a valid image
         if (!getimagesize($file['tmp_name'])) {
@@ -55,7 +55,7 @@ if (Request::isPost() && in_array(Request::post('action'), ['edit', 'delete', 'n
 
         // check for duplicates if new entry
         if (Request::post('action') != 'edit') {
-            $db->prepare('SELECT id FROM rooms WHERE name = :name, cost = :cost, description = :description, is_booked = :is_booked LIMIT 0,1', $data)->execute();
+            $db->prepare('SELECT id FROM rooms WHERE name = :name AND cost = :cost AND description = :description AND is_booked = :is_booked LIMIT 0,1', $data)->execute();
 
             if ($db->getRow()) {
                 $errors[] = 'Room already exists with the same details.';
@@ -64,7 +64,7 @@ if (Request::isPost() && in_array(Request::post('action'), ['edit', 'delete', 'n
 
         if (!$errors) {
             $query = 'INSERT INTO rooms (name, cost, description, is_booked%s) VALUES (:name, :cost, :description, :is_booked%s)';
-            if (Request::post('action') == 'edit') {
+            if (Request::post('action') === 'edit') {
                 $data['id'] = Request::post('id');
                 $query = 'UPDATE rooms SET name = :name, cost = :cost, description = :description, is_booked = :is_booked%s WHERE id = :id';
             }
