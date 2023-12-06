@@ -1,11 +1,25 @@
 <?php
-require "../src/Controllers/RoomsController.php";
-require '../src/Models/Rooms.php';
 
-$controller = new RoomsController();
-$rooms = new Rooms();
-$rooms = $rooms->getBookings();
+use App\System\Request;
+use App\System\Database;
 
+// include autoloader
+include __DIR__ . "/../src/autoload.php";
+
+// initiate db
+$errors = [];
+$db = new Database();
+
+// get available rooms
+$db->prepare('SELECT * FROM rooms WHERE is_booked = :is_booked', [
+    'is_booked' => (int) true
+])->execute();
+$rooms = $db->getRows();
+
+// show error if rooms array empty
+if (!$rooms) :
+    $errors[] = 'There\'s no booked rooms at the moment.';
+endif;
 render_component('head', ['title' => 'View Bookings']);
 ?>
 
@@ -15,23 +29,10 @@ render_component('head', ['title' => 'View Bookings']);
         <div class="container-fluid">
             <?php render_component('header', ['page' => 'View Bookings']); ?>
             <section class="px-0">
-                <!-- Errors Layouts -->
-                <?php if ($controller->hasErrors() && $controller->request->isPost()) : ?>
-                    <div class="alert alert-danger"><?= $controller->getLastError() ?></div>
-                <?php elseif ($controller->request->isPost() && !$controller->hasErrors()) : ?>
-                    <div class="alert alert-success">
-                        <?php
-                        if ($controller->request->getVar('action') == 'edit') {
-                            echo 'Room has been updated.';
-                        } elseif ($controller->request->getVar('action') == 'delete') {
-                            echo 'Selected room has been deleted.';
-                        } else {
-                            echo 'New room has been captured.';
-                        } ?>
-                    </div>
-                <?php endif; ?>
-
                 <div class="row mt-2 justify-content-center">
+                    <!-- Errors Layouts -->
+                    <?php render_component('errors', ['errors' => $errors]); ?>
+
                     <?php foreach ($rooms as $room) : ?>
                         <div class="col-lg-3 mb-3">
                             <?php render_component('room', $room) ?>
