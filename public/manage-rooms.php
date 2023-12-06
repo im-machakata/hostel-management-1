@@ -77,7 +77,13 @@ if (Request::isPost()) {
             }
             if ($newFileName) {
                 $data['image_url'] = '/assets/uploads/' . $newFileName;
-                $query = sprintf($query, ' AND image_url', ', :image_url');
+                
+                // add image url to query
+                if (Request::post('action') === 'edit') {
+                    $query = sprintf($query, ' AND image_url = :image_url');
+                } else {
+                    $query = sprintf($query, ', image_url', ', :image_url');
+                }
             } else {
                 $query = sprintf($query, '', '');
             }
