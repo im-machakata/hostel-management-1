@@ -85,15 +85,15 @@ render_component('head', ['title' => 'Book Room']);
                             <h4 class="text-dark mb-3">
                                 Room Details
                             </h4>
-                            <ul class="list-group mb-3">
-                                <li class="list-group-item d-flex justify-content-between border-success lh-sm">
+                            <ul class="list-group rounded mb-3">
+                                <li class="list-group-item d-flex justify-content-between border-info lh-sm">
                                     <div>
                                         <h6 class="my-0"><?= $room['name'] ?></h6>
                                         <small class="text-muted"><?= $room['description'] ?></small>
                                     </div>
                                     <span class="text-muted">$<?= number_format($room['cost'], 2)  ?></span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between border-success">
+                                <li class="list-group-item d-flex justify-content-between border-info">
                                     <span>Total (USD)</span>
                                     <strong>$<?= number_format($room['cost'], 2) ?></strong>
                                 </li>
