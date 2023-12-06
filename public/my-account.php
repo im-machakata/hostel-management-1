@@ -2,9 +2,15 @@
 
 use App\System\Database;
 use App\System\Request;
+use App\System\Response;
 
 // include autoloader
 include __DIR__ . "/../src/autoload.php";
+
+// check if user is logged / authenticated
+if (!user()->getId()) {
+    return Response::redirect('/login.php');
+}
 
 $errors = [];
 

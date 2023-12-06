@@ -1,11 +1,17 @@
 <?php
 
 use App\System\Database;
+use App\System\Response;
 use App\System\Request;
 
 // include autoloader
 include __DIR__ . "/../src/autoload.php";
 $rooms = $errors = [];
+
+// check if user is logged / authenticated
+if (!user()->getId()) {
+    return Response::redirect('/login.php');
+}
 
 // initiate db
 $db = new Database();

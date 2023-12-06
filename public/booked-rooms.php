@@ -1,6 +1,7 @@
 <?php
 
 use App\System\Request;
+use App\System\Response;
 use App\System\Database;
 
 // include autoloader
@@ -9,6 +10,11 @@ include __DIR__ . "/../src/autoload.php";
 // initiate db
 $errors = [];
 $db = new Database();
+
+// check if user is logged / authenticated
+if (!user()->getId()) {
+    return Response::redirect('/login.php');
+}
 
 // get available rooms
 $db->prepare('SELECT * FROM rooms WHERE is_booked = :is_booked', [
