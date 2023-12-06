@@ -52,7 +52,7 @@ if (Request::isPost() && !$errors) :
 
     // todo notify user
     // send email or sms if that's what you want
-    $success = mail(Request::getVar('email'), 'Room Booking Instructions', sprintf('You requested to book <strong class="fw-bold">%s</strong> on the school hostels system. If you\'d like to proceed with the booking, kindly pay a sum of USD $%s to the schools account and email us back with the proof. Remember, if you delay with the payment, the room may be snatched from right under your nose by other users.<hr class="my-4">You can use the following link to fake a <a href="http://%3$s/fake-payment.php?id=<?= %4$s ?>">successful</a> or <a href="http://%3$s/fake-payment.php?id=%4$s&status=paid">failed</a> payment to proceed with the testing.', $room['name'], $room['cost'], Request::getServer('server_name'), password_hash($payment_id, PASSWORD_DEFAULT)));
+    $success = mail(Request::getVar('email'), 'Room Booking Instructions', sprintf('You requested to book <strong class="fw-bold">%s</strong> on the school hostels system. If you\'d like to proceed with the booking, kindly pay a sum of USD $%s to the schools account and email us back with the proof. Remember, if you delay with the payment, the room may be snatched from right under your nose by other users.<hr class="my-4">You can use the following link to fake a <a href="http://%3$s/fake-payment.php?id=%4$s&status=paid">successful</a> or <a href="http://%3$s/fake-payment.php?id=%4$s&status=failed">failed</a> payment to proceed with the testing.', $room['name'], $room['cost'], Request::getServer('server_name'), password_hash($payment_id, PASSWORD_DEFAULT)));
     if (!$success) {
         $errors[] = 'Failed. Make sure server is connected and setup to send emails.';
     }
