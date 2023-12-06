@@ -25,6 +25,13 @@ if (Request::isPost()) {
     $file = $_FILES['roomImage'] ?? null;
     $newFileName = false;
 
+    if(Request::getVar('action') == 'delete'){
+        $db->prepare("DELETE FROM rooms WHERE id = :id", [
+            'id' => Request::post('id')
+        ])->execute();
+        return Response::redirect('/manage-rooms.php');
+    }
+
     if ($file && $file['error'] != UPLOAD_ERR_NO_FILE) {
 
         // check if file is a valid image
