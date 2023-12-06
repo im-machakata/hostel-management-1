@@ -45,7 +45,7 @@ if (Request::isPost()) {
             ])->execute();
 
             if ($user_id = $db->lastInsertId()) {
-                $_SESSION['user'] = $user_id;
+                session('user', $user_id);
                 return Response::redirect('/');
             }
 
