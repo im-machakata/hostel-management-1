@@ -46,15 +46,18 @@ function user()
     return new class
     {
         public $id = null;
-        private $row = null;
+        private $row = [];
 
         public function __construct()
         {
             $db = new \App\System\Database();
-            $db->prepare("SELECT * FROM users WHERE id = :id LIMIT 0,1", [
-                'id' => $this->getId()
-            ])->execute();
-            $this->row = $db->getRow();
+
+            if ($this->getId()) {
+                $db->prepare("SELECT * FROM users WHERE id = :id LIMIT 0,1", [
+                    'id' => $this->getId()
+                ])->execute();
+                $this->row = $db->getRow();
+            }
         }
 
         public function getId()
